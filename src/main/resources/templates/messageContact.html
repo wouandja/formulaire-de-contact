@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f9f9f9;
+            padding: 20px;
+        }
+        .box {
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            max-width: 600px;
+            margin: auto;
+        }
+        h2 {
+            color: #092471;
+            margin-bottom: 15px;
+            font-size: 15px;
+            text-align: left;
+        }
+        p {
+            margin: 8px 0;
+            color: #333;
+        }
+        .info {
+            background: #EE7D02;
+            color: #fff;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+        }
+        .label {
+            font-weight: bold;
+        }
+        blockquote {
+            background: #fff3e0;
+            padding: 10px 15px;
+            border-left: 5px solid #092471;
+            margin: 10px 0;
+            font-style: italic;
+            color: #333;
+        }
+        .footer {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #092471;
+        }
+    </style>
+</head>
+<body>
+<div class="box">
+
+    <h2>Vous avez un nouvel étudiant intéressé par vos formations. Voici ses coordonnées pour que vous puissiez prendre contact
+        rapidement et lui apporter toutes les informations nécessaires.</h2>
+    <div class="info">
+        <p><span class="label">Nom :</span> [[name]]</p>
+        <p><span class="label">Email :</span> [[email]]</p>
+        <p><span class="label">Téléphone :</span> [[number]]</p>
+        <p><span class="label">Message :</span></p>
+        <blockquote>"[[message]]"</blockquote>
+    </div>
+
+    <div class="footer">
+        <p>Ce message a été envoyé via le formulaire de contact de <b>Institut Supérieur Shak's MAX</b></p>
+        <p>À bientôt,<br>Veuillez le contacter rapidement afin de ne pas perdre cette opportunité et pour mieux comprendre ses besoins spécifiques</p>
+    </div>
+</div>
+</body>
+</html>
+
+
+
