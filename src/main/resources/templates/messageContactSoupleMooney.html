@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f9f9f9;
+            padding: 20px;
+        }
+        .box {
+            background: rgba(255, 255, 255, 0.95); /* blanc légèrement transparent */
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1); /* ombre douce */
+            max-width: 600px;
+            margin: auto;
+        }
+        h2 {
+            color: #092471;
+            margin-bottom: 15px;
+            font-size: 15px;
+            text-align: left;
+        }
+        p {
+            margin: 8px 0;
+            color: #333;
+        }
+        .info {
+            background: rgba(1, 107, 0, 0.85); /* vert #016B00 avec opacité 85% */
+            color: rgba(255, 255, 255, 0.95); /* texte blanc légèrement doux */
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+        }
+        .info p {
+            color: rgba(255, 255, 255, 0.95);
+        }
+        .label {
+            font-weight: bold;
+        }
+        blockquote {
+            background: rgba(255, 255, 255, 0.8); /* fond blanc semi-transparent */
+            padding: 10px 15px;
+            border-left: 5px solid rgba(1, 107, 0, 0.9); /* barre verte douce */
+            margin: 10px 0;
+            font-style: italic;
+            color: rgba(1, 107, 0, 0.9); /* texte vert doux */
+        }
+        .footer {
+            margin-top: 20px;
+            font-size: 14px;
+            color: rgba(9, 36, 113, 0.9); /* bleu légèrement atténué */
+        }
+    </style>
+
+</head>
+<body>
+<div class="box">
+
+    <h2>Vous avez une nouvelle personne qui s’est intéressée à vos services. Voici ses coordonnées pour que vous puissiez prendre contact
+        rapidement et lui apporter toutes les informations nécessaires.</h2>
+    <div class="info">
+        <p><span class="label">Nom :</span> [[name]]</p>
+        <p><span class="label">Email :</span> [[email]]</p>
+        <p><span class="label">Téléphone :</span> [[number]]</p>
+        <p><span class="label">Message :</span></p>
+        <blockquote>"[[message]]"</blockquote>
+    </div>
+
+    <div class="footer">
+        <p>Ce message a été envoyé via le formulaire de contact de <b>l'entreprise Souple Mooney</b></p>
+        <p>À bientôt,<br>Veuillez le contacter rapidement afin de ne pas perdre cette opportunité et pour mieux comprendre ses besoins spécifiques</p>
+    </div>
+</div>
+</body>
+</html>
+
+
+

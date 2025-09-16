@@ -29,7 +29,7 @@ public class ContactService {
     @Autowired
     private ContactMessageRepository contactMessageRepository;
 
-    public ContactMessageDTOs messegeSendUser(ContactMessageDTO form) {
+    public ContactMessageDTOs messegeSendUserShakMax(ContactMessageDTO form) {
         ContactMessageDTOs response = new ContactMessageDTOs();
 
         try {
@@ -55,7 +55,7 @@ public class ContactService {
             logger.info("Message sauvegardé en base pour : {}", form.getEmail());
 
             // 2️⃣ Préparer le contenu HTML pour l'admin
-            String template = new String(Files.readAllBytes(new ClassPathResource("templates/messageContact.html").getFile().toPath()));
+            String template = new String(Files.readAllBytes(new ClassPathResource("templates/messageContactShakMax.html").getFile().toPath()));
 
             String content = template
                     .replace("[[name]]", form.getName())
@@ -66,7 +66,66 @@ public class ContactService {
             // 3️⃣ Envoyer email HTML à l'admin
             MimeMessage mimeMessage = javaMailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
-            helper.setTo("gildasteunga23@gmail.com"); // changer avec l'email de l'admin
+            helper.setTo("shaksmax@yahoo.com"); // changer avec l'email de l'admin
+            helper.setSubject(" Nouveau message de contact");
+            helper.setText(content, true); // true → HTML
+            helper.setReplyTo(form.getEmail());
+            javaMailSender.send(mimeMessage);
+            logger.info("Email HTML envoyé à l'admin avec replyTo {}", form.getEmail());
+
+            // 4️⃣ Préparer la réponse pour l'API
+            response.setCode(200);
+            response.setMessage("Message envoyé avec succès");
+            response.setContactMessageDTO(form);
+
+        } catch (IOException | MessagingException e) {
+            logger.error("Erreur lors de l'envoi du message : {}", e.getMessage(), e);
+            response.setCode(500);
+            response.setMessage("Erreur lors de l'envoi du message : " + e.getMessage());
+            response.setContactMessageDTO(form);
+        }
+
+        return response;
+    }
+
+    public ContactMessageDTOs messegeSendUserSoupleMooney(ContactMessageDTO form) {
+        ContactMessageDTOs response = new ContactMessageDTOs();
+
+        try {
+            logger.info("Nouvelle demande de contact reçue : {}", form);
+
+            // Vérification de l'email
+            if (form.getEmail() == null || !form.getEmail().contains("@") || !form.getEmail().contains(".")) {
+                logger.warn("Email invalide : {}", form.getEmail());
+                response.setCode(400);
+                response.setMessage("Email invalide");
+                response.setContactMessageDTO(form);
+                return response;
+            }
+
+            // 1️⃣ Sauvegarde en base
+            ContactMessage messageEntity = new ContactMessage();
+            messageEntity.setName(form.getName());
+            messageEntity.setEmail(form.getEmail());
+            messageEntity.setNumber(form.getNumber());
+            messageEntity.setMessage(form.getMessage());
+            messageEntity.setDateEnvoi(LocalDateTime.now());
+            contactMessageRepository.save(messageEntity);
+            logger.info("Message sauvegardé en base pour : {}", form.getEmail());
+
+            // 2️⃣ Préparer le contenu HTML pour l'admin
+            String template = new String(Files.readAllBytes(new ClassPathResource("templates/messageContactSoupleMooney.html").getFile().toPath()));
+
+            String content = template
+                    .replace("[[name]]", form.getName())
+                    .replace("[[email]]", form.getEmail())
+                    .replace("[[number]]", form.getNumber())
+                    .replace("[[message]]", form.getMessage());
+
+            // 3️⃣ Envoyer email HTML à l'admin
+            MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+            helper.setTo("souplemoney1@gmail.com"); // changer avec l'email de l'admin
             helper.setSubject(" Nouveau message de contact");
             helper.setText(content, true); // true → HTML
             helper.setReplyTo(form.getEmail());

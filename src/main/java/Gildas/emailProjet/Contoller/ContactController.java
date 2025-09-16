@@ -16,10 +16,21 @@ public class ContactController {
     @Autowired
     private ContactService contactService;
 
-    @PostMapping("/send")
-    public ResponseEntity<ContactMessageDTOs> sendMessage(@RequestBody ContactMessageDTO form) {
+    @PostMapping("/sendShakMax")
+    public ResponseEntity<ContactMessageDTOs> sendMessageShakmax(@RequestBody ContactMessageDTO form) {
         // On délègue complètement la logique au service
-        ContactMessageDTOs response = contactService.messegeSendUser(form);
+        ContactMessageDTOs response = contactService.messegeSendUserShakMax(form);
+
+        // On renvoie la réponse avec le code HTTP approprié
+        return ResponseEntity
+                .status(response.getCode())
+                .body(response);
+    }
+
+    @PostMapping("/sendSoupleMooney")
+    public ResponseEntity<ContactMessageDTOs> sendMessageSoupleMoney(@RequestBody ContactMessageDTO form) {
+        // On délègue complètement la logique au service
+        ContactMessageDTOs response = contactService.messegeSendUserSoupleMooney(form);
 
         // On renvoie la réponse avec le code HTTP approprié
         return ResponseEntity
