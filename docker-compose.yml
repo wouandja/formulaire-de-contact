@@ -1,0 +1,43 @@
+
+version: '3.8'
+
+volumes:
+  mysql-data:
+networks:
+  spring-boot-mysql-network:
+    name: spring-boot-mysql-network
+services:
+  mysqldb:
+    image: mysql:8.0.43  # Version spécifique au lieu de lts
+    command: --default-authentication-plugin=mysql_native_password
+    ports:
+      - "3308:3306"
+    environment:
+      - MYSQL_DATABASE=sendMessageDataBase
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+    networks:
+      - spring-boot-mysql-network
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 10s
+      retries: 10
+      start_period: 30s  # Temps additionnel avant que les healthchecks commencent
+  techstore:
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      mysqldb:
+        condition: service_healthy
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysqldb:3306/sendMessageDataBase?useSSL=false&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=${DB_USER}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
+    networks:
+      - spring-boot-mysql-network
+    entrypoint: sh -c "echo SPRING_DATASOURCE_USERNAME=$SPRING_DATASOURCE_USERNAME; echo SPRING_DATASOURCE_PASSWORD=$SPRING_DATASOURCE_PASSWORD; exec java -jar /app.jar"

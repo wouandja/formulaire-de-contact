@@ -1,0 +1,61 @@
+name: Deploy Spring Boot with Docker
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      DB_USER: ${{ secrets.DB_USER }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY  }}
+
+      - name: Copy project to VPS
+        run: |
+          ssh -o StrictHostKeyChecking=no mbemnova1@${{ secrets.VPS_IP }} "mkdir -p ${{ secrets.DEPLOY_PATH }}"
+          rsync -avz --delete --exclude '.git' ./ mbemnova1@${{ secrets.VPS_IP }}:${{ secrets.DEPLOY_PATH }}/
+      - name: Copy .env to server (first deploy only)
+        run: |
+          ssh -o StrictHostKeyChecking=no mbemnova1@${{ secrets.VPS_IP }} "if [ ! -f ${{ secrets.DEPLOY_PATH }}/.env ]; then echo 'First deploy: copying .env'; exit 1; fi" || \
+          scp -o StrictHostKeyChecking=no .env mbemnova1@${{ secrets.VPS_IP }}:${{ secrets.DEPLOY_PATH }}/.env
+
+          
+      - name: Deploy and Restart App
+        run: |
+          ssh mbemnova1@${{ secrets.VPS_IP }} << EOF
+            set -e
+            cd ${{ secrets.DEPLOY_PATH }}
+           
+            chmod +x ./mvnw
+            ./mvnw clean package -DskipTests
+            docker-compose down || true
+            # Libère le port 3306 si occupé
+            docker stop $(docker ps -q --filter "publish=3306") || true
+             # Export des variables d'environnement
+            export DB_USER=${{ secrets.DB_USER }}
+            export DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+      
+            
+            echo "DB_USER=$DB_USER"
+            echo "DB_PASSWORD=$DB_PASSWORD"
+
+           DB_USER=$DB_USER DB_PASSWORD=$DB_PASSWORD docker-compose config
+           DB_USER=$DB_USER DB_PASSWORD=$DB_PASSWORD docker-compose build --no-cache
+           DB_USER=$DB_USER DB_PASSWORD=$DB_PASSWORD docker-compose up -d
+
+            docker image prune -f
+          EOF
+
+
