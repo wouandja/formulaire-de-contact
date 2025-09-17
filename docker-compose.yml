@@ -14,9 +14,9 @@ services:
       - "3309:3306"
     environment:
       - MYSQL_DATABASE=sendMessageDataBase
-      - MYSQL_USER=${DB_USER}
-      - MYSQL_PASSWORD=${DB_PASSWORD}
-      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+      - MYSQL_USER=mbemnova1
+      - MYSQL_PASSWORD=MbemNova2025
+      - MYSQL_ROOT_PASSWORD=MbemNova2025
     networks:
       - spring-boot-mysql-network
     volumes:
@@ -36,8 +36,8 @@ services:
         condition: service_healthy
     environment:
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysqldb:3306/sendMessageDataBase?useSSL=false&serverTimezone=UTC
-      - SPRING_DATASOURCE_USERNAME=${DB_USER}
-      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
+      - SPRING_DATASOURCE_USERNAME=mbemnova1
+      - SPRING_DATASOURCE_PASSWORD=MbemNova2025
     networks:
       - spring-boot-mysql-network
     entrypoint: sh -c "echo SPRING_DATASOURCE_USERNAME=$SPRING_DATASOURCE_USERNAME; echo SPRING_DATASOURCE_PASSWORD=$SPRING_DATASOURCE_PASSWORD; exec java -jar /app.jar"
