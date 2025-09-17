@@ -3,6 +3,8 @@ package Gildas.emailProjet.Contoller;
 
 import Gildas.emailProjet.Dto.ContactMessageDTO;
 import Gildas.emailProjet.Dto.ContactMessageDTOs;
+import Gildas.emailProjet.Dto.ContactMessageSoupleDto;
+import Gildas.emailProjet.Dto.ContactMessageSoupleDtos;
 import Gildas.emailProjet.Services.ContactService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -28,9 +30,9 @@ public class ContactController {
     }
 
     @PostMapping("/sendSoupleMooney")
-    public ResponseEntity<ContactMessageDTOs> sendMessageSoupleMoney(@RequestBody ContactMessageDTO form) {
+    public ResponseEntity<ContactMessageSoupleDtos> sendMessageSoupleMoney(@RequestBody ContactMessageSoupleDto form) {
         // On délègue complètement la logique au service
-        ContactMessageDTOs response = contactService.messegeSendUserSoupleMooney(form);
+        ContactMessageSoupleDtos response = contactService.messegeSendUserSoupleMooney(form);
 
         // On renvoie la réponse avec le code HTTP approprié
         return ResponseEntity

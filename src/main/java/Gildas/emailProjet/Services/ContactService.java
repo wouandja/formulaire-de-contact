@@ -2,8 +2,12 @@ package Gildas.emailProjet.Services;
 
 import Gildas.emailProjet.Dto.ContactMessageDTO;
 import Gildas.emailProjet.Dto.ContactMessageDTOs;
+import Gildas.emailProjet.Dto.ContactMessageSoupleDto;
+import Gildas.emailProjet.Dto.ContactMessageSoupleDtos;
 import Gildas.emailProjet.Entity.ContactMessage;
+import Gildas.emailProjet.Entity.ContactMessageSouple;
 import Gildas.emailProjet.Repository.ContactMessageRepository;
+import Gildas.emailProjet.Repository.ContactMessageReposotorySouple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +32,8 @@ public class ContactService {
 
     @Autowired
     private ContactMessageRepository contactMessageRepository;
+    @Autowired
+    private ContactMessageReposotorySouple contactMessageRepositorySouple;
 
     public ContactMessageDTOs messegeSendUserShakMax(ContactMessageDTO form) {
         ContactMessageDTOs response = new ContactMessageDTOs();
@@ -88,8 +94,8 @@ public class ContactService {
         return response;
     }
 
-    public ContactMessageDTOs messegeSendUserSoupleMooney(ContactMessageDTO form) {
-        ContactMessageDTOs response = new ContactMessageDTOs();
+    public ContactMessageSoupleDtos messegeSendUserSoupleMooney(ContactMessageSoupleDto form) {
+        ContactMessageSoupleDtos response = new ContactMessageSoupleDtos();
 
         try {
             logger.info("Nouvelle demande de contact reçue : {}", form);
@@ -99,18 +105,20 @@ public class ContactService {
                 logger.warn("Email invalide : {}", form.getEmail());
                 response.setCode(400);
                 response.setMessage("Email invalide");
-                response.setContactMessageDTO(form);
+                response.setContactMessagesoupleDTO(form);
                 return response;
             }
 
             // 1️⃣ Sauvegarde en base
-            ContactMessage messageEntity = new ContactMessage();
+            ContactMessageSouple messageEntity = new ContactMessageSouple();
             messageEntity.setName(form.getName());
             messageEntity.setEmail(form.getEmail());
-            messageEntity.setNumber(form.getNumber());
+            messageEntity.setPhone(form.getPhone());
             messageEntity.setMessage(form.getMessage());
+            messageEntity.setCountry(form.getCountry());
+
             messageEntity.setDateEnvoi(LocalDateTime.now());
-            contactMessageRepository.save(messageEntity);
+            contactMessageRepositorySouple.save(messageEntity);
             logger.info("Message sauvegardé en base pour : {}", form.getEmail());
 
             // 2️⃣ Préparer le contenu HTML pour l'admin
@@ -119,8 +127,10 @@ public class ContactService {
             String content = template
                     .replace("[[name]]", form.getName())
                     .replace("[[email]]", form.getEmail())
-                    .replace("[[number]]", form.getNumber())
-                    .replace("[[message]]", form.getMessage());
+                    .replace("[[number]]", form.getPhone())
+                    .replace("[[message]]", form.getMessage())
+                    .replace("[[pays]]", form.getCountry());
+
 
             // 3️⃣ Envoyer email HTML à l'admin
             MimeMessage mimeMessage = javaMailSender.createMimeMessage();
@@ -135,13 +145,13 @@ public class ContactService {
             // 4️⃣ Préparer la réponse pour l'API
             response.setCode(200);
             response.setMessage("Message envoyé avec succès");
-            response.setContactMessageDTO(form);
+            response.setContactMessagesoupleDTO(form);
 
         } catch (IOException | MessagingException e) {
             logger.error("Erreur lors de l'envoi du message : {}", e.getMessage(), e);
             response.setCode(500);
             response.setMessage("Erreur lors de l'envoi du message : " + e.getMessage());
-            response.setContactMessageDTO(form);
+            response.setContactMessagesoupleDTO(form);
         }
 
         return response;
